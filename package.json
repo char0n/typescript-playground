@@ -1,0 +1,27 @@
+{
+  "name": "typescript-playground",
+  "version": "1.0.0",
+  "description": "Learning TypeScript",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/char0n/typescript-playground.git"
+  },
+  "keywords": [
+    "learning",
+    "typescript"
+  ],
+  "author": "Vladimír Gorej <vladimir.gorej@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/char0n/typescript-playground/issues"
+  },
+  "homepage": "https://github.com/char0n/typescript-playground#readme",
+  "devDependencies": {
+    "@types/node": "^16.11.6",
+    "typescript": "^4.4.4"
+  }
+}
