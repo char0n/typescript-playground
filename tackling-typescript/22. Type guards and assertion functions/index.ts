@@ -233,6 +233,104 @@ function func7(arg: unknown) {
   }
 }
 
+// example of a user-defined type guard: isArrayWithInstancesOf()
+/**
+ * This type guard for Arrays works similarly to `Array.isArray()`,
+ * but also checks if all Array elements are instances of `T`.
+ * As a consequence, the type of `arr` is narrowed to `Array<T>`
+ * if this function returns `true`.
+ *
+ * Warning: This type guard can make code unsafe – for example:
+ * We could use another reference to `arr` to add an element whose
+ * type is not `T`. Then `arr` doesn’t have the type `Array<T>`
+ * anymore.
+ */
+function isArrayWithInstancesOf<T>(
+  arr: any, Class: new (...args: any[])=>T)
+  : arr is Array<T>
+{
+  if (!Array.isArray(arr)) {
+    return false;
+  }
+  if (!arr.every(elem => elem instanceof Class)) {
+    return false;
+  }
+
+  // %inferred-type: any[]
+  arr; // (A)
+
+  return true;
+}
+
+/**
+ * In line A, we can see that the inferred type of arr is not Array<T>,
+ * but our checks have ensured that it currently is. That’s why we can return true.
+ * TypeScript trusts us and narrows to Array<T> when we use isArrayWithInstancesOf():
+ */
+const value: unknown = {};
+if (isArrayWithInstancesOf(value, RegExp)) {
+  // %inferred-type: RegExp[]
+  value;
+}
+
+
+/**
+ * An implementation of the `typeof` operator.
+ */
+function isTypeof<T>(value: unknown, prim: T): value is T {
+  if (prim === null) {
+    return value === null;
+  }
+  return value !== null && (typeof prim) === (typeof value);
+}
+
+const value1: unknown = {};
+if (isTypeof(value1, 123)) {
+  // %inferred-type: number
+  value1;
+}
+
+/**
+ * A partial implementation of the `typeof` operator.
+ */
+function isTypeof1(value: any, typeString: 'boolean'): value is boolean;
+function isTypeof1(value: any, typeString: 'number'): value is number;
+function isTypeof1(value: any, typeString: 'string'): value is string;
+function isTypeof1(value: any, typeString: string): boolean {
+  return typeof value === typeString;
+}
+
+const value2: unknown = {};
+if (isTypeof1(value2, 'boolean')) {
+  // %inferred-type: boolean
+  value2;
+}
+
+// using an interface as a type map
+
+interface TypeMap {
+  boolean: boolean;
+  number: number;
+  string: string;
+}
+
+
+/**
+ * A partial implementation of the `typeof` operator.
+ */
+function isTypeof2<T extends keyof TypeMap>(value: any, typeString: T)
+  : value is TypeMap[T] {
+  return typeof value === typeString;
+}
+
+const value3: unknown = {};
+if (isTypeof2(value, 'string')) {
+  // %inferred-type: string
+  value;
+}
+
+// assertion functions
+
 
 
 export { }
