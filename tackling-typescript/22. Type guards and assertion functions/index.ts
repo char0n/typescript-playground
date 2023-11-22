@@ -97,19 +97,16 @@ function func2(firstOrSecond: FirstOrSecond) {
 
 function func3(firstOrSecond: FirstOrSecond) {
   // @ts-expect-error: Property 'second' does not exist on
-  // type 'FirstOrSecond'. [...]
   if (firstOrSecond.second !== undefined) {
-    // ···
   }
 }
 
 // the operator in doesn’t narrow non-union types
 function func4(obj: object) {
   if ('name' in obj) {
-    // %inferred-type: object
+    // %inferred-type: object & Record<"name", unknown>
     obj;
-
-    // @ts-expect-error: Property 'name' does not exist on type 'object'.
+    // %inferred-type: any
     obj.name;
   }
 }
@@ -192,10 +189,9 @@ const mixedValues1 = [1, undefined, 2, null];
 // %inferred-type: number[]
 const numbers = mixedValues1.filter(isNotNullish);
 
-// alas, we must use a type guard function directly – an arrow function with a type guard is not enough:
-// %inferred-type: (number | null | undefined)[]
+// %inferred-type: number[]
 const stillMixed1 = mixedValues1.filter(
-  x => x !== undefined && x !== null);
+  (x): x is NonNullable<typeof x> => x !== undefined && x !== null);
 
 // %inferred-type: (number | null | undefined)[]
 const stillMixed2 = mixedValues1.filter(
@@ -205,7 +201,7 @@ const stillMixed2 = mixedValues1.filter(
 function isFunction(value: unknown): value is Function {
   return typeof value === 'function';
 }
-// %inferred-type: (value: unknown) => value is Function
+// %inferred-type: (value: unknown) => boolean
 isFunction;
 
 function func6(arg: unknown) {
@@ -324,7 +320,7 @@ function isTypeof2<T extends keyof TypeMap>(value: any, typeString: T)
 }
 
 const value3: unknown = {};
-if (isTypeof2(value, 'string')) {
+if (isTypeof2(value3, 'string')) {
   // %inferred-type: string
   value;
 }

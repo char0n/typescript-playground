@@ -3,6 +3,8 @@ val1 = 'string';
 
 let val2: object;
 val2 = new Date();
+// @ts-expect-error: Type 'string' is not assignable to type 'object'.
+val2 = 'string';
 
 const val3: {prop: string} = {prop: 'val'};
 
